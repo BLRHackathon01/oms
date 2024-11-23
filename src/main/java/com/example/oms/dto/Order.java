@@ -29,4 +29,12 @@ public class Order extends BaseModel{
     public void setStatus(CurrentStatus status) {
         this.status = status;
     }
+
+    public Product getProduct() {
+        return product;
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
 }

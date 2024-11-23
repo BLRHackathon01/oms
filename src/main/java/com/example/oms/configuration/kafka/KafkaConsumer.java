@@ -1,3 +1,4 @@
+/*
 package com.example.oms.configuration.kafka;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -15,3 +16,4 @@ public class KafkaConsumer<V> {
         return value;
     }
 }
+*/
