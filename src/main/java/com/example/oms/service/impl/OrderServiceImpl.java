@@ -4,10 +4,11 @@ import com.example.oms.dao.Order;
 import com.example.oms.repository.OrderRepository;
 import com.example.oms.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.core.support.FragmentNotImplementedException;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class OrderServiceImpl implements OrderService {
     @Autowired
     private OrderRepository orderRepository;
