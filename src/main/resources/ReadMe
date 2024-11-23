@@ -1,0 +1,11 @@
+use my_oms;
+
+select * from user;
+
+select * from product;
+
+insert into product(id,product_name,symbol,price,quantity)
+values(111,"xyz","a",12823,100);
+
+insert into product(id,product_name,symbol,price,quantity)
+values(222,"xxx","b",123823,500);
