@@ -26,6 +26,16 @@ public class Order {
 
     private String orderStatus;
 
+    private String stockSymbol;
+
+    public String getStockSymbol() {
+        return stockSymbol;
+    }
+
+    public void setStockSymbol(String stockSymbol) {
+        this.stockSymbol = stockSymbol;
+    }
+
     public Long getId() {
         return id;
     }
