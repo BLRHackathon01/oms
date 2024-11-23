@@ -1,9 +1,8 @@
 package com.example.oms.dto;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 
-@Entity
+@Entity(name = "OrderTab")
 public class Order extends BaseModel{
 
     @ManyToOne
@@ -12,6 +11,22 @@ public class Order extends BaseModel{
     @ManyToOne
     private Product product;
 
-
+    @Enumerated(EnumType.ORDINAL)
     private CurrentStatus status;
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public CurrentStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(CurrentStatus status) {
+        this.status = status;
+    }
 }
