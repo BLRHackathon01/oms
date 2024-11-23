@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -26,6 +27,14 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order findById(String id) {
         return orderRepository.findById(id).orElse(null);
+    }
+
+    public Order updateById(String id, Order entity) {
+        Optional<Order> order = orderRepository.findById(id);
+        if (order.isPresent()) {
+            orderRepository.save(entity);
+        }
+        return null;
     }
 
     @Override
