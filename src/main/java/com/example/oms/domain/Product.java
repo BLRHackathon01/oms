@@ -20,6 +20,9 @@ public class Product {
     @Column(name="active_count")
     private Integer activeCount;
 
+    @Column(name="price")
+    private Integer price;
+
     public String getProductName() {
         return productName;
     }
