@@ -1,5 +1,6 @@
 package com.example.oms.service.impl;
 
+import com.example.oms.configuration.kafka.KafkaProducer;
 import com.example.oms.dto.CurrentStatus;
 import com.example.oms.dto.Order;
 import com.example.oms.dto.Product;
@@ -18,13 +19,16 @@ public class OrderServiceImpl implements OrderService {
     OrderRepository orderRepository;
     ProductRepository productRepository;
     UserRepository userRepository;
+    KafkaProducer kafkaProducer;
 
     public OrderServiceImpl(OrderRepository orderRepository,
                             ProductRepository productRepository,
-                            UserRepository userRepository) {
+                            UserRepository userRepository,
+                            KafkaProducer kafkaProducer) {
         this.orderRepository = orderRepository;
         this.productRepository = productRepository;
         this.userRepository = userRepository;
+        this.kafkaProducer = kafkaProducer;
     }
 
     @Override
@@ -58,6 +62,8 @@ public class OrderServiceImpl implements OrderService {
         order.setUser(user);
         order.setProduct(product);
         order.setStatus(CurrentStatus.PENDING);
+
+        kafkaProducer.sendMessage(user.getEmail() + ":" +  order.getStatus() + ":" + "Order Updated" );
 
 
         return orderRepository.save(order);

@@ -1,5 +1,6 @@
 package com.example.oms.controller;
 
+import com.example.oms.dao.ConfirmDto;
 import com.example.oms.dao.OrderRequestDto;
 import com.example.oms.dao.OrderResponseDto;
 import com.example.oms.dto.CurrentStatus;
@@ -34,6 +35,11 @@ public class OrderController {
         responseDto.setStatus(CurrentStatus.PENDING);
         responseDto.setAction("Please confirm on your order.");
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/orderConfirm")
+    public  ResponseEntity<Object> confirmOrder(@RequestBody ConfirmDto confirmDto){
+        return  null;
     }
 
 }

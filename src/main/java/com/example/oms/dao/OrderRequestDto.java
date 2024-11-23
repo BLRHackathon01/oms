@@ -5,6 +5,15 @@ public class OrderRequestDto {
     private long userId;
     private long productId;
     private int quantity;
+    private String buyOrSell;
+
+    public String getBuyOrSell() {
+        return buyOrSell;
+    }
+
+    public void setBuyOrSell(String buyOrSell) {
+        this.buyOrSell = buyOrSell;
+    }
 
     public long getUserId() {
         return userId;
