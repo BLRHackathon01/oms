@@ -1,54 +1,77 @@
 package com.example.oms.service.impl;
 
-import com.example.oms.dao.Order;
+import com.example.oms.configuration.kafka.KafkaProducer;
+import com.example.oms.dto.CurrentStatus;
+import com.example.oms.dto.Order;
+import com.example.oms.dto.Product;
+import com.example.oms.dto.User;
 import com.example.oms.repository.OrderRepository;
+import com.example.oms.repository.ProductRepository;
+import com.example.oms.repository.UserRepository;
 import com.example.oms.service.OrderService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
 public class OrderServiceImpl implements OrderService {
-    @Autowired
-    private OrderRepository orderRepository;
 
-    @Override
-    public List<Order> findAll() {
-        return orderRepository.findAll();
+    OrderRepository orderRepository;
+    ProductRepository productRepository;
+    UserRepository userRepository;
+    KafkaProducer kafkaProducer;
+
+    public OrderServiceImpl(OrderRepository orderRepository,
+                            ProductRepository productRepository,
+                            UserRepository userRepository,
+                            KafkaProducer kafkaProducer) {
+        this.orderRepository = orderRepository;
+        this.productRepository = productRepository;
+        this.userRepository = userRepository;
+        this.kafkaProducer = kafkaProducer;
     }
 
     @Override
-    public Order save(Order entity) {
-        return orderRepository.save(entity);
-    }
+    public Order createOrder(long userId, long productId, int quantity,String buyOrSell) {
 
-    @Override
-    public Order findById(String id) {
-        return orderRepository.findById(id).orElse(null);
-    }
+        // validate the user;
+        Optional<User> byId = userRepository.findById(userId);
 
-    public Order updateById(String id, Order entity) {
-        Optional<Order> order = orderRepository.findById(id);
-        if (order.isPresent()) {
-            orderRepository.save(entity);
+        if(byId.isEmpty()){
+            throw new RuntimeException("User Selected Does not exist."); // define specific exception
         }
-        return null;
-    }
 
-    @Override
-    public void delete(Order entity) {
+        User user = byId.get();
 
-    }
+        Optional<Product> optionId = productRepository.findById(productId);
 
-    @Override
-    public void deleteById(String id) {
-        orderRepository.deleteById(id);
-    }
+        if(optionId.isEmpty()){
+            throw new RuntimeException("Product Selected Does not exist."); // define specific exception
+        }
 
-    @Override
-    public long count() {
-        return orderRepository.count();
+        Product product = optionId.get();
+
+        // Checking availability of quantity
+        if(product.getQuantity() > quantity){
+            if(buyOrSell.equals("sell")){
+                product.setQuantity(product.getQuantity()-quantity);
+            }else{
+                product.setQuantity(product.getQuantity()+quantity);
+            }
+
+
+        }
+
+        productRepository.save(product);
+
+        Order order = new Order();
+        order.setUser(user);
+        order.setProduct(product);
+        order.setStatus(CurrentStatus.PENDING);
+
+        kafkaProducer.sendMessage(user.getEmail() + ":" +  order.getStatus() + ":" + "Order Updated" );
+
+
+        return orderRepository.save(order);
     }
 }

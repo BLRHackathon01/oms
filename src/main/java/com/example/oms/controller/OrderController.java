@@ -1,64 +1,46 @@
 package com.example.oms.controller;
 
-import com.example.oms.dao.Order;
-import com.example.oms.model.RestResponse;
+import com.example.oms.dao.ConfirmDto;
+import com.example.oms.dao.OrderRequestDto;
+import com.example.oms.dao.OrderResponseDto;
+import com.example.oms.dto.CurrentStatus;
+import com.example.oms.dto.Order;
 import com.example.oms.service.OrderService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/orders")
+@RequestMapping("/oms")
 public class OrderController {
-    @Autowired
-    private OrderService orderService;
 
-    @PostMapping()
-    public ResponseEntity<RestResponse<Order>> createOrder(@RequestBody Order order) {
-        RestResponse<Order> orderResponse = new RestResponse<>();
-        Order newOrder = orderService.save(order);
-        orderResponse.setData(newOrder);
-        orderResponse.setStatus(HttpStatus.CREATED);
-        orderResponse.setStatusMessage("Order Created Successfully");
-        return ResponseEntity.status(orderResponse.getStatus()).body(orderResponse);
+    OrderService orderService;
+
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
     }
 
-    @GetMapping()
-    public ResponseEntity<RestResponse<List<Order>>> readAllOrders() {
-        RestResponse<List<Order>> orderResponse = new RestResponse<>();
-        List<Order> allOrders = orderService.findAll();
-        orderResponse.setData(allOrders);
-        orderResponse.setStatusMessage("Orders Retrieved Successfully");
-        return ResponseEntity.status(orderResponse.getStatus()).body(orderResponse);
+    @PostMapping("/order")
+    public ResponseEntity<OrderResponseDto> createOrder(@RequestBody OrderRequestDto orderRequestDto){
+
+        Order order = orderService.createOrder(orderRequestDto.getUserId(),
+                orderRequestDto.getProductId(),
+                orderRequestDto.getQuantity(),
+                orderRequestDto.getBuyOrSell());
+
+        OrderResponseDto responseDto = new OrderResponseDto();
+        responseDto.setOrderId(order.getId());
+        responseDto.setStatus(CurrentStatus.PENDING);
+        responseDto.setAction("Please confirm on your order.");
+        return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<RestResponse<Order>> readOrderById(@PathVariable String id) {
-        RestResponse<Order> orderResponse = new RestResponse<>();
-        Order order = orderService.findById(id);
-        orderResponse.setData(order);
-        orderResponse.setStatusMessage("Order Retrieved Successfully");
-        return ResponseEntity.status(orderResponse.getStatus()).body(orderResponse);
+    @PostMapping("/orderConfirm")
+    public  ResponseEntity<Object> confirmOrder(@RequestBody ConfirmDto confirmDto){
+        return  null;
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<RestResponse<Order>> updateOrderById(@PathVariable String id, @RequestBody Order order) {
-        RestResponse<Order> orderResponse = new RestResponse<>();
-        Order updatedOrder = orderService.updateById(id, order);
-        orderResponse.setData(updatedOrder);
-        orderResponse.setStatusMessage("Order Updated Successfully");
-        return ResponseEntity.status(orderResponse.getStatus()).body(orderResponse);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<RestResponse<Order>> deleteOrderById(@PathVariable String id) {
-        RestResponse<Order> orderResponse = new RestResponse<>();
-        orderService.deleteById(id);
-        orderResponse.setData(null);
-        orderResponse.setStatusMessage("Order Deleted Successfully");
-        return ResponseEntity.status(orderResponse.getStatus()).body(orderResponse);
-    }
 }
