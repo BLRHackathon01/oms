@@ -32,7 +32,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order createOrder(long userId, long productId, int quantity) {
+    public Order createOrder(long userId, long productId, int quantity,String buyOrSell) {
 
         // validate the user;
         Optional<User> byId = userRepository.findById(userId);
@@ -53,7 +53,13 @@ public class OrderServiceImpl implements OrderService {
 
         // Checking availability of quantity
         if(product.getQuantity() > quantity){
-            product.setQuantity(product.getQuantity()-quantity);
+            if(buyOrSell.equals("sell")){
+                product.setQuantity(product.getQuantity()-quantity);
+            }else{
+                product.setQuantity(product.getQuantity()+quantity);
+            }
+
+
         }
 
         productRepository.save(product);

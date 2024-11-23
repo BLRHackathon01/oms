@@ -28,7 +28,8 @@ public class OrderController {
 
         Order order = orderService.createOrder(orderRequestDto.getUserId(),
                 orderRequestDto.getProductId(),
-                orderRequestDto.getQuantity());
+                orderRequestDto.getQuantity(),
+                orderRequestDto.getBuyOrSell());
 
         OrderResponseDto responseDto = new OrderResponseDto();
         responseDto.setOrderId(order.getId());
