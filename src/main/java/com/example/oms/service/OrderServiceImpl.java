@@ -39,6 +39,7 @@ public class OrderServiceImpl implements OrderService {
             }
             else{
                 // Throw Exception
+                // Create and Handle Custom Exceptions
                 throw new RuntimeException("Invalid Order Type");
             }
         }
@@ -61,7 +62,7 @@ public class OrderServiceImpl implements OrderService {
         try {
             order = orderRepository.save(order);
         }catch (Exception e)
-        {
+        {//// Create and Handle Custom Exceptions
             throw new RuntimeException(" Product / User not found " +
                     " Contact Support team  ");
         }

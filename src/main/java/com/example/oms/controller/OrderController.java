@@ -31,7 +31,7 @@ public class OrderController {
         return new ResponseEntity<>;
     }*/
     @GetMapping(value = "/list")
-    public List<Order> getProducts()
+    public List<Order> getOrders()
     {
         List<Order> orders = orderService.findAll();
         return orders;
