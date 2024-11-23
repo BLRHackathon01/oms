@@ -32,6 +32,8 @@ public class OrderServiceImpl implements OrderService {
             Product product = order.getProduct();
             Integer qua = order.getQuantity();
             Integer actCnt = product.getActiveCount();
+
+            // Check Active Count while BUY and SELL
             if ("BUY".equals(order.getOrderType())) {
                 product.setActiveCount(actCnt + qua);
             } else if ("SELL".equals(order.getOrderType())) {
@@ -50,6 +52,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order cancelOrder(Order order) {
 
+        // Check Active Count while BUY and SELL
         if ("PENDING".equals(order.getOrderStatus())) {
             order.setOrderStatus("Cancelled");
         }
@@ -58,7 +61,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order saveOrder(Order order) {
-
+       // Validate Order
         try {
             order = orderRepository.save(order);
         }catch (Exception e)
